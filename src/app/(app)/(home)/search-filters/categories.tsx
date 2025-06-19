@@ -7,17 +7,17 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 import { CategoryDropdown } from "./category-dropdown";
-import { CustomCategory } from "../types";
 import { CategoriesSidebar } from "./categories-sidebar";
+import { CategoriesGetManyOutput } from "@/modules/categories/types";
 
 interface Props {
-    data: CustomCategory[];
+    data: CategoriesGetManyOutput
 }
 
 export const Categories = ({ data }: Props) => {
-    const containerRef = useRef<HTMLDListElement>(null);
-    const measureRef = useRef<HTMLDListElement>(null);
-    const viewAllRef = useRef<HTMLDListElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const measureRef = useRef<HTMLDivElement>(null);
+    const viewAllRef = useRef<HTMLDivElement>(null);
 
     const [visibleCount, setVisibleCount] = useState(data.length);
     const [isAnyHovered, setIsAnyHovered] = useState(false);
@@ -59,7 +59,7 @@ export const Categories = ({ data }: Props) => {
 
     return (
         <div className="relative w-full">
-            <CategoriesSidebar data={data} open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
+            <CategoriesSidebar open={isSidebarOpen} onOpenChange={setIsSidebarOpen} />
 
             {/* Hidden div to measure all items */}
             <div ref={measureRef}
