@@ -1,6 +1,6 @@
 'use client'
 
-import z from "zod"
+import {z} from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
@@ -12,7 +12,7 @@ import Link from "next/link"
 import { Poppins } from "next/font/google"
 import { cn } from "@/lib/utils"
 import { useTRPC } from "@/trpc/client"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 
@@ -25,18 +25,21 @@ export const SignUpView = () => {
     const router = useRouter();
 
     const trpc = useTRPC()
+    const queryClient = useQueryClient()
+
     const register = useMutation(trpc.auth.register.mutationOptions({
         onError: (error) => {
             toast.error(error.message)
         },
-        onSuccess: () => {
+        onSuccess: async () => {
+            await queryClient.invalidateQueries(trpc.auth.session.queryFilter())
             router.push("/");
         }
     }))
 
     const form = useForm<z.infer<typeof registerSchema>>({
-        mode: "all",
         resolver: zodResolver(registerSchema),
+        mode: "all",
         defaultValues: {
             email: "",
             password: "",
@@ -45,10 +48,12 @@ export const SignUpView = () => {
     });
 
     const onSubmit = (values: z.infer<typeof registerSchema>) => {
-        register.mutate(values);
+        register.mutate(values)
     }
 
-    const username = form.watch('username')
+    
+
+    const username = form.watch("username")
     const usernameErrors = form.formState.errors.username;
 
     const showPreview = username && !usernameErrors;
@@ -75,7 +80,7 @@ export const SignUpView = () => {
                             </Button>
                         </div>
                         <h1 className="text-4xl font-medium">
-                            John over 1,000 creators earning money on Funroad.
+                            Join over 1,000 creators earning money on Funroad.
                         </h1>
                         <FormField 
                             name="username"
